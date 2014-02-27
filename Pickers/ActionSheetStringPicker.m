@@ -160,10 +160,10 @@ static CGFloat offset = 15;
 {
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(offset, 0, self.viewSize.width - 2*offset, 20)];
     
-    label.text = rawData[row];
+    label.text = self.data[row];
     label.textAlignment = NSTextAlignmentCenter;
     label.font = [UIFont fontWithName:@"Arial" size:15];
-    label.adjustsLetterSpacingToFitWidth = YES;
+    //label.adjustsLetterSpacingToFitWidth = YES;
     label.numberOfLines = 0;
     label.backgroundColor = [UIColor clearColor];
     
