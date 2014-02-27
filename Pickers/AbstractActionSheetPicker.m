@@ -148,6 +148,12 @@
     [self dismissPicker];
 }
 
+- (void) actionPickerTapped
+{
+    [self notifyTarget:self.target didSucceedWithAction:self.successAction origin:[self storedOrigin]];
+    [self dismissPicker];
+}
+
 - (void)dismissPicker {
 #if __IPHONE_4_1 <= __IPHONE_OS_VERSION_MAX_ALLOWED
     if (self.actionSheet)
@@ -207,7 +213,12 @@
         index++;
     }
     if (NO == self.hideCancel) {
-        UIBarButtonItem *cancelBtn = [self createButtonWithType:UIBarButtonSystemItemCancel target:self action:@selector(actionPickerCancel:)];
+        UIBarButtonItem *cancelBtn;
+        if(self.cancelTitle){
+            cancelBtn = [self createCustomCancelButtonWithTitle:self.cancelTitle target:self action:@selector(actionPickerCancel:)];
+        } else {
+            cancelBtn = [self createButtonWithType:UIBarButtonSystemItemCancel target:self action:@selector(actionPickerCancel:)];
+        }
         [barItems addObject:cancelBtn];
     }
     UIBarButtonItem *flexSpace = [self createButtonWithType:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
@@ -217,7 +228,13 @@
         [barItems addObject:labelButton];    
         [barItems addObject:flexSpace];
     }
-    UIBarButtonItem *doneButton = [self createButtonWithType:UIBarButtonSystemItemDone target:self action:@selector(actionPickerDone:)];
+    UIBarButtonItem *doneButton;
+    if(self.doneTitle){
+        doneButton = [self createCustomDoneButtonWithTitle:self.doneTitle target:self action:@selector(actionPickerDone:)];
+    } else {
+        doneButton = [self createButtonWithType:UIBarButtonSystemItemDone target:self action:@selector(actionPickerDone:)];
+    }
+    
     [barItems addObject:doneButton];
     [pickerToolbar setItems:barItems animated:YES];
     return pickerToolbar;
@@ -236,6 +253,16 @@
 
 - (UIBarButtonItem *)createButtonWithType:(UIBarButtonSystemItem)type target:(id)target action:(SEL)buttonAction {
     return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:type target:target action:buttonAction];
+}
+
+- (UIBarButtonItem *)createCustomCancelButtonWithTitle:(NSString *) title target:(id)target action:(SEL)buttonAction
+{
+    return [[UIBarButtonItem alloc] initWithTitle:title style:UIBarButtonItemStyleBordered target:target action:buttonAction];
+}
+
+- (UIBarButtonItem *)createCustomDoneButtonWithTitle:(NSString *) title target:(id)target action:(SEL)buttonAction
+{
+    return [[UIBarButtonItem alloc] initWithTitle:title style:UIBarButtonItemStyleDone target:target action:buttonAction];
 }
 
 #pragma mark - Utilities and Accessors

@@ -69,6 +69,10 @@
     return self;
 }
 
+- (void)reloadAllComponents
+{
+    [self.pickerView reloadInputViews];
+}
 
 - (UIView *)configuredPickerView {
     if (!self.data)
@@ -79,6 +83,9 @@
     stringPicker.dataSource = self;
     stringPicker.showsSelectionIndicator = YES;
     [stringPicker selectRow:self.selectedIndex inComponent:0 animated:NO];
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(pickerTapped:)];
+    
+    [stringPicker addGestureRecognizer:tapGesture];
     
     //need to keep a reference to the picker so we can clear the DataSource / Delegate when dismissing
     self.pickerView = stringPicker;
@@ -86,7 +93,19 @@
     return stringPicker;
 }
 
-- (void)notifyTarget:(id)target didSucceedWithAction:(SEL)successAction origin:(id)origin {    
+-(void)pickerTapped:(UITapGestureRecognizer*)gestureRecognizer
+{
+    CGPoint location = [gestureRecognizer locationInView:self.pickerView];
+    CGFloat halfViewHeight = self.pickerView.frame.size.height / 2;
+    NSInteger rowHeight = 22;
+    
+    if (location.y < halfViewHeight + rowHeight && location.y > halfViewHeight - rowHeight)
+    {
+        [self actionPickerTapped];
+    }
+}
+
+- (void)notifyTarget:(id)target didSucceedWithAction:(SEL)successAction origin:(id)origin {
     if (self.onActionSheetDone) {
         _onActionSheetDone(self, self.selectedIndex, [self.data objectAtIndex:self.selectedIndex]);
         return;
@@ -131,9 +150,26 @@
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
     return [self.data objectAtIndex:row];
 }
+static CGFloat offset = 15;
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component {
-    return pickerView.frame.size.width - 30;
+    return pickerView.frame.size.width - offset * 2;
+}
+
+-(UIView *) pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
+{
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(offset, 0, self.viewSize.width - 2*offset, 20)];
+    
+    label.text = rawData[row];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.font = [UIFont fontWithName:@"Arial" size:15];
+    label.adjustsLetterSpacingToFitWidth = YES;
+    label.numberOfLines = 0;
+    label.backgroundColor = [UIColor clearColor];
+    
+    [label sizeToFit];
+    
+    return label;
 }
 
 @end

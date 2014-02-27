@@ -36,6 +36,9 @@
 @property (nonatomic, assign) BOOL hideCancel;
 @property (nonatomic, assign) CGRect presentFromRect;
 
+@property (nonatomic, strong) NSString *cancelTitle;
+@property (nonatomic, strong) NSString *doneTitle;
+
     // For subclasses.
 - (id)initWithTarget:(id)target successAction:(SEL)successAction cancelAction:(SEL)cancelActionOrNil origin:(id)origin;
 
@@ -56,5 +59,7 @@
 
     //For subclasses. This responds to a custom button being pressed.
 - (IBAction)customButtonPressed:(id)sender;
+
+- (void) actionPickerTapped;
 
 @end
