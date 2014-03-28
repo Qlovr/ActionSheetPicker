@@ -27,7 +27,7 @@
 
 #import "ActionSheetStringPicker.h"
 
-@interface ActionSheetStringPicker()
+@interface ActionSheetStringPicker()<UIGestureRecognizerDelegate>
 @property (nonatomic,strong) NSArray *data;
 @property (nonatomic,assign) NSInteger selectedIndex;
 @end
@@ -84,6 +84,7 @@
     stringPicker.showsSelectionIndicator = YES;
     [stringPicker selectRow:self.selectedIndex inComponent:0 animated:NO];
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(pickerTapped:)];
+    tapGesture.delegate = self;
     
     [stringPicker addGestureRecognizer:tapGesture];
     
@@ -91,6 +92,11 @@
     self.pickerView = stringPicker;
     
     return stringPicker;
+}
+
+-(BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return YES;
 }
 
 -(void)pickerTapped:(UITapGestureRecognizer*)gestureRecognizer
